@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DashboardDataPagination } from "@/features/dashboard/types/dashboard.types";
 import { formatDate, formatNumber } from "@/utils/formaters";
+import { DashboardListSkeleton } from "./dashboard-skeletons";
 
 interface DashboardListProps {
   data?: DashboardDataPagination;
@@ -14,13 +15,8 @@ interface DashboardListProps {
 export function DashboardList({ data, isLoading, isError }: DashboardListProps) {
   const records = data?.data;
 
-  if (isLoading) {
-    return <p className="p-4">Carregando dados...</p>;
-  }
-
-  if (isError) {
-    return <p className="p-4 text-red-500">Erro ao carregar os dados.</p>;
-  }
+  if (isLoading) return <DashboardListSkeleton />;
+  if (isError) return <p className="p-4 text-red-500">Erro ao carregar os dados.</p>;
 
   return (
     <Card>

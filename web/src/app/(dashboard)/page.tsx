@@ -12,6 +12,9 @@ import { DashboardContinentVaccinations } from "./_components/dashboard-continen
 import { DashboardListPagination } from "./_components/dashboard-list-pagination";
 import type { DashboardFilterSchema } from "@/features/dashboard/schemas/dashboard-filter.schema";
 import { useDashboardSummary } from "@/features/dashboard/hooks/use-dashboard-summary";
+import { DashboardListSkeleton, DashboardSummaryChartSkeleton } from "./_components/dashboard-skeletons";
+import { useDashboardContinentSummary } from "@/features/dashboard/hooks/use-dashboard-continent-summary";
+import { useDashboardContinentVaccinations } from "@/features/dashboard/hooks/use-dashboard-continent-vaccinations";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -25,6 +28,8 @@ export default function Dashboard() {
   const filters: DashboardFiltersInterface = { country, start_date, end_date };
   const { data: records, isLoading: isLoadingRecords, isError: isErrorRecords } = useDashboardData(page, size, filters);
   const { data: summary, isLoading: isLoadingSummary, isError: isErrorSummary } = useDashboardSummary();
+  const { data: summaryContinent, isLoading: isLoadingSummaryContinent, isError: isErrorSummaryContinent } = useDashboardContinentSummary();
+  const { data: continentVaccinations, isLoading: isLoadingContinentVaccinations, isError: isErrorContinentVaccinations } = useDashboardContinentVaccinations();
 
   function setFilters (data: DashboardFilterSchema) {
     const params = new URLSearchParams(searchParams.toString());
@@ -88,21 +93,25 @@ export default function Dashboard() {
           <DashboardSummaryChart data={summary} isLoading={isLoadingSummary} isError={isErrorSummary} />
         </div>
         <div className="col-span-1">
-          <DashboardContinentSummary />
+          <DashboardContinentSummary data={summaryContinent} isLoading={isLoadingSummaryContinent} isError={isErrorSummaryContinent} />
         </div>
         <div className="col-span-2 md:col-span-1">
-          <DashboardContinentVaccinations />
+          <DashboardContinentVaccinations data={continentVaccinations} isLoading={isLoadingContinentVaccinations} isError={isErrorContinentVaccinations} />
         </div>
       </div>
 
-      <div className="flex justify-between items-center gap-3 mb-2">
-        <h2 className="text-1xl font-bold">Informações específicas:</h2>
-        <DashboardFilters onFiltersChange={setFilters} />
-      </div>
+      {!isLoadingRecords && records && (
+        <>
+          <div className="flex justify-between items-center gap-3 mb-2">
+            <h2 className="text-1xl font-bold">Informações específicas:</h2>
+            <DashboardFilters onFiltersChange={setFilters} />
+          </div>
+        </>
+      )}
 
       <DashboardList data={records} isLoading={isLoadingRecords} isError={isErrorRecords} />
       
-      {records && records.pages > 1 && (
+      {!isLoadingRecords && records && records.pages > 1 && (
         <DashboardListPagination 
           page={page}
           pages={records.pages}

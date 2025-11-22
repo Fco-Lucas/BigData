@@ -5,6 +5,7 @@ import { ChartContainer, ChartConfig, ChartTooltip, ChartTooltipContent } from "
 import { DashboardSummary } from "@/features/dashboard/types/dashboard.types";
 import { formatNumber } from "@/utils/formaters";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { DashboardSummaryChartSkeleton } from "./dashboard-skeletons";
 
 const chartConfig = {
   total_cases: {
@@ -20,14 +21,8 @@ interface DashboardSummaryChartProps {
 } 
 
 export function DashboardSummaryChart({ data, isLoading, isError }: DashboardSummaryChartProps) {
-
-  if (isLoading) {
-    return <p className="p-4">Carregando dados...</p>;
-  }
-
-  if (isError) {
-    return <p className="p-4 text-red-500">Erro ao carregar os dados.</p>;
-  }
+  if (isLoading) return <DashboardSummaryChartSkeleton />;
+  if (isError || !data) return <p className="p-4 text-red-500">Erro ao carregar os dados.</p>;
 
   return (
     <Card className="w-full">
